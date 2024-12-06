@@ -1,0 +1,3 @@
+bash scripts/finetune_joint.sh "wooden pot" data/wooden_pot real_reg/samples_wooden_pot \
+                                    "cat" data/cat real_reg/samples_cat  \
+                                    wooden_pot+cat finetune_joint.yaml <pretrained-model-path>

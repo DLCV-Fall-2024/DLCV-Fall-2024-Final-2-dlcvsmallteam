@@ -4,3 +4,12 @@
 
 student_data/*
 sample_submission.csv
+Data
+*.zip
+__pycache__
+real_reg
+output
+gen_images
+logs
+*.pyc
+*.ckpt
