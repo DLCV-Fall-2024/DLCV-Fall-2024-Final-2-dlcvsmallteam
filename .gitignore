@@ -13,3 +13,4 @@ gen_images
 logs
 *.pyc
 *.ckpt
+lora-trained-xl
