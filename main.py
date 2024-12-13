@@ -1,9 +1,16 @@
 from inpainting import generate_inpainting_image
 import os
+import argparse
 
 def main():
     
-    task = 1
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--task', type=int, default=0, help='Task number')
+    parser.add_argument('-s', '--submission_type', action='store_true', help='Generate Submission type')
+    
+    args = parser.parse_args()
+    
+    task = args.task
     
     tag_list_list = [
         ['cat2', 'dog6'],
@@ -26,15 +33,30 @@ def main():
     #     image_filename = os.path.join(output_dir, 'base_image.png'),
     # )
     
-    generate_inpainting_image(
-        task=task,
-        output_dir=output_dir,
-        base_image_path = f'./output/base_images/{task}/0.png',
-        xml_path = xml_path,
-        tag_list = tag_list_list[task],
-        image_filename= 'inpainting_image.png'
-    )
+    base_image_path = f'./output/base_images/{task}/0.png'
     
+    if not args.submission_type:
+        generate_inpainting_image(
+            task=task,
+            output_dir=output_dir,
+            base_image_path = base_image_path,
+            xml_path = xml_path,
+            tag_list = tag_list_list[task],
+            image_filename= 'inpainting_image.png'
+        )
+    else:
+        for i in range(10):
+            generate_inpainting_image(
+                task=task,
+                output_dir=output_dir,
+                base_image_path = base_image_path,
+                xml_path = xml_path,
+                tag_list = tag_list_list[task],
+                image_filename= f'test_{i}.png',
+                save_submission=True,
+                submission_dir='./output/submission_images',
+                submission_num=i
+            )
 
 if __name__ == '__main__':
     main()

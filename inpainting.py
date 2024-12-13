@@ -4,7 +4,7 @@ import random
 
 import numpy as np
 import torch
-from diffusers import StableDiffusionXLInpaintPipeline
+from diffusers import StableDiffusionXLInpaintPipeline, StableDiffusionXLImg2ImgPipeline
 from PIL import Image
 from transformers import AutoModelForCausalLM, AutoProcessor
 
@@ -17,8 +17,14 @@ def generate_inpainting_image(
     base_image_path='assets/dog_and_cat.png',
     xml_path='./xmls/0.xml',
     image_filename='assets/test.png',
-    tag_list=['cat', 'dog']
+    tag_list=['cat', 'dog'],
+    save_submission=False,
+    submission_dir='',
+    submission_num=0,
 ):
+    
+    base_image = Image.open(base_image_path)
+    base_image.save(os.path.join(output_dir, 'base_image.png'))
     
     MODEL_ID = 'microsoft/Florence-2-large-ft'
     model = AutoModelForCausalLM.from_pretrained(MODEL_ID, trust_remote_code=True).eval().cuda()
@@ -119,6 +125,28 @@ def generate_inpainting_image(
                 result.save(os.path.join(output_dir, f'{concept_name}_{img_cnt}.png'))
                 
                 img_cnt += 1
-            
+                
+    if save_submission:
+        refine_pipeline = StableDiffusionXLImg2ImgPipeline.from_pretrained(
+            'stabilityai/stable-diffusion-xl-refiner-1.0',
+            torch_dtype=torch.float16,
+            variant='fp16',
+            use_safetensors=True
+        ).to('cuda')
+        
+        prompt_list = [
+            'A cat on the right and a dog on the left.',
+            'A flower in a vase.',
+            'A dog, a pet cat and a dog near a forest.',
+            'A cat wearing wearable glasses in a watercolor style'
+        ]
+        
+        refined_image = refine_pipeline(
+            image=result,
+            prompt=prompt_list[task],
+        ).images[0]
+        
+        refined_image.save(os.path.join(submission_dir, str(task), f'{submission_num}.png'))        
+    
 if __name__ == '__main__':
     generate_inpainting_image()
