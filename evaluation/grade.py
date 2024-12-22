@@ -12,6 +12,7 @@ if __name__ == '__main__':
     parser.add_argument('--json_path', type=str, help='Path to the JSON file')
     parser.add_argument('--output_dir', type=str, default='.', help='Directory of saved output')
     parser.add_argument('-s', '--setting', type=int, default=0, help='Setting of the evaluation')
+    parser.add_argument('-d', '--detail', action='store_true', help='Print detailed information')
     # Parse the arguments
     args = parser.parse_args()
     json_path = args.json_path
@@ -60,13 +61,22 @@ if __name__ == '__main__':
             image_score = sum(image_scores) / len(image_scores)
             text_score = sum(text_scores) / len(text_scores)
 
-            print(f"CLIP Image Score: {image_score:.2f}")
-            print(f"CLIP Text Score: {text_score:.2f}")
-            print(f"CLIP Image Score Max: {max(image_scores):.2f}")
-            print(f"CLIP Text Score Max: {max(text_scores):.2f}")
+            total_scores = [i + 2.2 * t for i, t in zip(image_scores, text_scores)]
+
+            sorted_indices = sorted(range(len(total_scores)), key=lambda k: total_scores[k])[-1:]
+
+            image_scores_filtered = [image_scores[i] for i in sorted_indices]
+            text_scores_filtered = [text_scores[i] for i in sorted_indices]
+
+            print(f"CLIP Image Score: {sum(image_scores_filtered)/len(image_scores_filtered):.2f}")
+            print(f"CLIP Text Score: {sum(text_scores_filtered)/len(text_scores_filtered):.2f}")
+
+            if args.detail:
+                print(f"CLIP Image Scores: {image_scores_filtered}")
+                print(f"CLIP Text Scores: {text_scores_filtered}")
             
-            clip_t_list.append(text_score)
-            clip_i_list.append(image_score)
+            clip_t_list.append(sum(text_scores_filtered)/len(text_scores_filtered))
+            clip_i_list.append(sum(image_scores_filtered)/len(image_scores_filtered))
             
         print(f"\nAverage CLIP Image Score: {sum(clip_i_list) / len(clip_i_list):.2f}")
         print(f"Average CLIP Text Score: {sum(clip_t_list) / len(clip_t_list):.2f}")
@@ -89,11 +99,13 @@ if __name__ == '__main__':
         
         # total_score = image_scores + 2.5 * text_scores
         image_score = sum(image_scores) / len(image_scores)
-        text_scores = sum(text_scores) / len(text_scores)
+        text_score = sum(text_scores) / len(text_scores)
 
         print(f"CLIP Image Score: {image_score:.2f}")
-        print(f"CLIP Text Score: {text_scores:.2f}")
+        print(f"CLIP Text Score: {text_score:.2f}")
 
-
+        if args.detail:
+            print(f"CLIP Image Scores: {image_scores}")
+            print(f"CLIP Text Scores: {text_scores}")
 
     

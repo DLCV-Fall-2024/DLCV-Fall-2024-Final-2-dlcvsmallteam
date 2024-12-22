@@ -2,16 +2,20 @@ import copy
 import os
 import random
 
+from diffusers import FluxControlNetInpaintPipeline
+import cv2
 import numpy as np
 import torch
-from diffusers import StableDiffusionXLInpaintPipeline, StableDiffusionXLImg2ImgPipeline
-from PIL import Image
+from diffusers import StableDiffusionXLControlNetInpaintPipeline, StableDiffusionXLImg2ImgPipeline, ControlNetModel
+
+from PIL import Image, ImageFilter
+
 from transformers import AutoModelForCausalLM, AutoProcessor
 
 from src.utils.xml_utils import get_tags_from_xml_file, get_counter_from_tags
 from src.utils.florence_utils import generate_image_mask
 
-def generate_inpainting_image(
+def generate_inpainting_image_ctrl(
     task=0,
     output_dir='',
     base_image_path='assets/dog_and_cat.png',
@@ -23,6 +27,10 @@ def generate_inpainting_image(
     submission_num=0,
 ):
     
+    seed = 42
+
+    generator = torch.Generator(device='cuda').manual_seed(seed)
+    
     base_image = Image.open(base_image_path)
     base_image.save(os.path.join(output_dir, 'base_image.png'))
     
@@ -33,8 +41,8 @@ def generate_inpainting_image(
     concepts = get_tags_from_xml_file(xml_path)
     counters = get_counter_from_tags(concepts)
     
-    print('Concepts: ', concepts)
-    print('Counters: ', counters)
+    # print('Concepts: ', concepts)
+    # print('Counters: ', counters)
     
     TASK_PROMPT = '<CAPTION_TO_PHRASE_GROUNDING>'
     
@@ -48,7 +56,7 @@ def generate_inpainting_image(
         unique_tags = list(set(tags))
         unique_tags.sort()
         
-        print(f'Layer: {i}, Unique tags: {unique_tags}')
+        # print(f'Layer: {i}, Unique tags: {unique_tags}')
         
         if i == 1:
             image = Image.open(base_image_path)
@@ -57,7 +65,7 @@ def generate_inpainting_image(
         
         for idx, tag in enumerate(unique_tags):
         
-            print(f'i: {i}, idx: {idx}, tag: {tag}')
+            # print(f'i: {i}, idx: {idx}, tag: {tag}')
             
             prompt = TASK_PROMPT + tag
             inputs = processor(text=prompt, images=image, return_tensors='pt')
@@ -68,7 +76,7 @@ def generate_inpainting_image(
                 max_new_tokens=1024,
                 early_stopping=False,
                 do_sample=False,
-                num_beams=3
+                num_beams=3,
             )
             
             generated_text = processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
@@ -83,6 +91,7 @@ def generate_inpainting_image(
             
             for k, box in enumerate(boxes):
                 image_mask = generate_image_mask(image, bbox=box)
+                image_mask = image_mask.filter(ImageFilter.GaussianBlur(30))
                 image_mask.save(os.path.join(output_dir, f'mask_{tag}_{k}.png'))
             
             number_same_tag = counters[depth][tag]
@@ -90,9 +99,15 @@ def generate_inpainting_image(
             for k in range(number_same_tag):
                 
                 concept_name = tag_list[img_cnt]
+
+                controlnet = ControlNetModel.from_pretrained(
+                    'diffusers/controlnet-canny-sdxl-1.0-mid',
+                    torch_dtype=torch.float16
+                )
                 
-                pipeline = StableDiffusionXLInpaintPipeline.from_pretrained(
+                pipeline = StableDiffusionXLControlNetInpaintPipeline.from_pretrained(
                     'stabilityai/stable-diffusion-xl-base-1.0',
+                    controlnet=controlnet,
                     torch_dtype=torch.float16
                 ).to('cuda')
                 
@@ -107,18 +122,45 @@ def generate_inpainting_image(
                 mask_image = Image.open(os.path.join(output_dir, f'mask_{tag}_{k}.png')).convert('L')
                 
                 prompt = f'A sitting sks {tag}.'
+                # if concept_name == 'dog6':
+                #     prompt = f'A cat on the right and a sks dog on the left.'
+                # elif concept_name == 'cat2':
+                #     prompt = f'A sks cat on the right and a dog on the left.'
+            
+                # if concept_name == 'dog6':
+                #     prompt = f'The cat on the right and the sks dog on the left.'
+                # elif concept_name == 'cat2':
+                #     prompt = f'The sks cat on the right and the dog on the left.'
                 
                 # if task == 3:
                 #     if img_cnt == 0:
                 #         prompt = f'A sks cat wearing glasses.'
                 #     else:
                 #         prompt = f'A sks {tag} worn by the cat.'
-                        
+                # if task == 3:
+                #     if img_cnt == 0:
+                #         prompt = f'A sks cat wearing glasses.'
+                #     else:
+                #         prompt = f'A sks {tag} worn by the cat.'
+
+                def make_canny_condition(image):
+                    image = np.array(image)
+                    image = cv2.Canny(image, 100, 200)
+                    image = image[:,:, None]
+                    image = np.concatenate([image, image, image], axis=2)
+                    image = Image.fromarray(image)
+                    return image
+
+                control_image = make_canny_condition(origin_image)
+
                 result = pipeline(
                     prompt=prompt,
                     image=origin_image,
                     mask_image=mask_image,
-                    strength=0.3
+                    # strength=0.99,
+                    # controlnet_conditioning_scale=0.5,
+                    generator=generator,
+                    control_image=control_image
                 ).images[0]
                 
                 result.save(os.path.join(output_dir, image_filename))
@@ -131,7 +173,8 @@ def generate_inpainting_image(
             'stabilityai/stable-diffusion-xl-refiner-1.0',
             torch_dtype=torch.float16,
             variant='fp16',
-            use_safetensors=True
+            use_safetensors=True,
+            generator=generator
         ).to('cuda')
         
         prompt_list = [
@@ -149,4 +192,4 @@ def generate_inpainting_image(
         refined_image.save(os.path.join(submission_dir, str(task), f'{submission_num}.png'))        
     
 if __name__ == '__main__':
-    generate_inpainting_image()
+    generate_inpainting_image_ctrl()

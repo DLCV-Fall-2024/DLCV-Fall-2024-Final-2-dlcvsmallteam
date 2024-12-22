@@ -28,20 +28,11 @@ def main():
     
     output_dir = f'./output/inpainting_images/{task}'
     xml_path = f'./xmls/{task}.xml'
-    # base_image_prompt_path = os.path.join('./llm_base_image_prompts', f'{task}.txt')
-    
-    # with open(base_image_prompt_path, 'r') as file:
-    #     base_image_prompt = file.read()
-    
+
     os.makedirs(output_dir, exist_ok=True)
     
-    # generate_base_image(
-    #     prompt = base_image_prompt,
-    #     image_filename = os.path.join(output_dir, 'base_image.png'),
-    # )
     
-    base_image_path = f'./output/base_images/{task}/0.png'
-    base_images = glob.glob(f'./output/base_images_candidates/{task}/*.png')
+    base_images = glob.glob(f'./output/base_images/{task}/*.png')
     base_images = sorted(base_images)
     
     if not args.submission_type:
@@ -54,19 +45,20 @@ def main():
             image_filename= 'inpainting_image.png'
         )
     else:
-        for i in range(100):
-            print(f'Generating submission image {i}')
-            generate_inpainting_image(
-                task=task,
-                output_dir=output_dir,
-                base_image_path = base_images[i],
-                xml_path = xml_path,
-                tag_list = tag_list_list[task],
-                image_filename= f'test_{i}.png',
-                save_submission=True,
-                submission_dir='./output/submission_images',
-                submission_num=i
-            )
+        for j in range(10):
+            for i in range(10):
+                print(f'Generating submission image {i}')
+                generate_inpainting_image(
+                    task=task,
+                    output_dir=output_dir,
+                    base_image_path = base_images[i],
+                    xml_path = xml_path,
+                    tag_list = tag_list_list[task],
+                    image_filename= f'test_{10*j+i}.png',
+                    save_submission=True,
+                    submission_dir='./output/submission_images_candidates',
+                    submission_num=10*j+i
+                )
 
 if __name__ == '__main__':
     main()
