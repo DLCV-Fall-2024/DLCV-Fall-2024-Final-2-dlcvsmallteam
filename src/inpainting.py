@@ -86,7 +86,7 @@ def generate_inpainting_image(
             
             for k, box in enumerate(boxes):
                 image_mask = generate_image_mask(image, bbox=box)
-                image_mask = image_mask.filter(ImageFilter.GaussianBlur(5))
+                # image_mask = image_mask.filter(ImageFilter.GaussianBlur(5))
                 image_mask.save(os.path.join(output_dir, f'mask_{tag}_{k}.png'))
             
             number_same_tag = counters[depth][tag]
@@ -117,15 +117,34 @@ def generate_inpainting_image(
                         prompt = f'The sitting sks cat on the right and the sitting dog on the left.'
                 elif task == 1:
                     if concept_name == 'vase':
-                        prompt = f'A flower in a sks vase.'
+                        prompt = f'a sks vase.'
                     elif concept_name == 'flower_1':
-                        prompt = f'A vase with a sks flower.'
+                        prompt = f'a sks flower in the vase.'
                 elif task == 2:
-                    prompt = f'A sitting sks {tag}.'
+                    if concept_name == 'dog6':
+                        prompt = "Two dogs and a cat near a forest. " \
+                                "One of the sks dog is on the left. " \
+                                    "The other dog is on the right. " \
+                                        "The cat is in the middle. "
+                    elif concept_name == 'dog':
+                        prompt = "Two dogs and a cat near a forest. " \
+                                "One of the dog is on the left. " \
+                                    "The other sks dog is on the right. " \
+                                        "The cat is in the middle. "
+                    elif concept_name == 'pet_cat1':
+                        prompt = "Two dogs and a cat near a forest. " \
+                                "One of the dog is on the left. " \
+                                    "The other dog is on the right. " \
+                                        "The sks pet cat is in the middle. "
                 elif task == 3:
                     prompt = f'A sks {tag}.'
                 
                 strength_list = [0.3, 0.3, 0.1, 0.1]
+
+                if concept_name == 'vase':
+                    strength_list = [0.3, 0.9999, 0.1, 0.1]
+                else:
+                    strength_list = [0.3, 0.3, 0.1, 0.1]
 
                 result = pipeline(
                     prompt=prompt,
@@ -133,6 +152,8 @@ def generate_inpainting_image(
                     mask_image=mask_image,
                     strength=strength_list[task],
                     num_inference_steps=50,
+                    # width=512,
+                    # height=512
                 ).images[0]
                 
                 result.save(os.path.join(output_dir, image_filename))
@@ -158,8 +179,12 @@ def generate_inpainting_image(
         refined_image = refine_pipeline(
             image=result,
             prompt=prompt_list[task],
+            # original_size=(512,512),
+            # target_size=(512,512)
         ).images[0]
         
+        refined_image = refined_image.resize((512, 512))
+
         refined_image.save(os.path.join(submission_dir, str(task), f'{submission_num}.png'))        
     
 if __name__ == '__main__':
