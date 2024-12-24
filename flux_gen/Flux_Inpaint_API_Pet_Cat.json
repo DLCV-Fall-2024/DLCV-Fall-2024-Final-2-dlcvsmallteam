@@ -1,0 +1,268 @@
+{
+  "1": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "39",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "2": {
+    "inputs": {
+      "samples": [
+        "11",
+        0
+      ],
+      "vae": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "3": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance"
+  },
+  "6": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader"
+  },
+  "8": {
+    "inputs": {
+      "unet_name": "flux_dev_fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "class_type": "UNETLoader"
+  },
+  "9": {
+    "inputs": {
+      "clip_name1": "clip_l.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux"
+    },
+    "class_type": "DualCLIPLoader"
+  },
+  "11": {
+    "inputs": {
+      "seed": 949427484705376,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "32",
+        0
+      ],
+      "positive": [
+        "20",
+        0
+      ],
+      "negative": [
+        "20",
+        1
+      ],
+      "latent_image": [
+        "20",
+        2
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "12": {
+    "inputs": {
+      "text": "A close-up of a <pet_cat> on the left, a big dog and a small dog on the right near the forest.",
+      "clip": [
+        "39",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "13": {
+    "inputs": {
+      "model": "gokaygokay/Florence-2-Flux-Large",
+      "precision": "fp16",
+      "attention": "sdpa"
+    },
+    "class_type": "DownloadAndLoadFlorence2Model"
+  },
+  "14": {
+    "inputs": {
+      "kernel_size": 50,
+      "sigma": 20.5,
+      "mask": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "ImpactGaussianBlurMask"
+  },
+  "18": {
+    "inputs": {
+      "expand": 50,
+      "tapered_corners": true,
+      "mask": [
+        "19",
+        1
+      ]
+    },
+    "class_type": "GrowMask"
+  },
+  "19": {
+    "inputs": {
+      "text_input": "white cat",
+      "task": "caption_to_phrase_grounding",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 1024,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 225892049442984,
+      "image": [
+        "40",
+        0
+      ],
+      "florence2_model": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "Florence2Run"
+  },
+  "20": {
+    "inputs": {
+      "noise_mask": true,
+      "positive": [
+        "35",
+        0
+      ],
+      "negative": [
+        "35",
+        1
+      ],
+      "vae": [
+        "6",
+        0
+      ],
+      "pixels": [
+        "40",
+        0
+      ],
+      "mask": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "InpaintModelConditioning"
+  },
+  "21": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "SaveImage"
+  },
+  "32": {
+    "inputs": {
+      "model": [
+        "39",
+        0
+      ]
+    },
+    "class_type": "DifferentialDiffusion"
+  },
+  "33": {
+    "inputs": {
+      "control_net_name": "flux_union_pro.safetensors"
+    },
+    "class_type": "ControlNetLoader"
+  },
+  "34": {
+    "inputs": {
+      "type": "depth",
+      "control_net": [
+        "33",
+        0
+      ]
+    },
+    "class_type": "SetUnionControlNetType"
+  },
+  "35": {
+    "inputs": {
+      "strength": 0.3,
+      "start_percent": 0,
+      "end_percent": 0.7000000000000001,
+      "positive": [
+        "3",
+        0
+      ],
+      "negative": [
+        "1",
+        0
+      ],
+      "control_net": [
+        "34",
+        0
+      ],
+      "image": [
+        "36",
+        0
+      ],
+      "vae": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced"
+  },
+  "36": {
+    "inputs": {
+      "ckpt_name": "depth_anything_v2_vitl.pth",
+      "resolution": 512,
+      "image": [
+        "40",
+        0
+      ]
+    },
+    "class_type": "DepthAnythingV2Preprocessor"
+  },
+  "39": {
+    "inputs": {
+      "lora_name": "dog6_rank4_bf16.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "8",
+        0
+      ],
+      "clip": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "LoraLoader"
+  },
+  "40": {
+    "inputs": {
+      "image": "0.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  }
+}

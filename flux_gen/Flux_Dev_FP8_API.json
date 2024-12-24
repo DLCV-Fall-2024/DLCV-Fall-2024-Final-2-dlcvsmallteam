@@ -1,0 +1,168 @@
+{
+  "1": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": false,
+        "lora": "watercolor_rank4_bf16-step00480.safetensors",
+        "strength": 1
+      },
+      "lora_2": {
+        "on": true,
+        "lora": "wearable_glasses_rank4_bf16.safetensors",
+        "strength": 1
+      },
+      "lora_3": {
+        "on": true,
+        "lora": "cat2_rank4_bf16.safetensors",
+        "strength": 1
+      },
+      "lora_4": {
+        "on": false,
+        "lora": "dog6_rank4_bf16.safetensors",
+        "strength": 1
+      },
+      "lora_5": {
+        "on": false,
+        "lora": "dog_rank4_bf16-step00640.safetensors",
+        "strength": 0.75
+      },
+      "lora_6": {
+        "on": false,
+        "lora": "flower_1_rank4_bf16.safetensors",
+        "strength": 1
+      },
+      "lora_7": {
+        "on": false,
+        "lora": "vase_rank4_bf16.safetensors",
+        "strength": 1
+      },
+      "lora_8": {
+        "on": false,
+        "lora": "pet_cat_rank4_bf16-step00640.safetensors",
+        "strength": 1
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "13",
+        0
+      ],
+      "clip": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)"
+  },
+  "2": {
+    "inputs": {
+      "text": "A <cat2> wearing <wearable_glasses>, sitting gracefully in a cozy indoor setting with soft natural light highlighting the unique design of the glasses. The <cat2> has a calm and curious expression, perfectly showcasing the stylish <wearable_glasses>.",
+      "clip": [
+        "1",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "3": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "1",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "4": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 4
+    },
+    "class_type": "EmptySD3LatentImage"
+  },
+  "5": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance"
+  },
+  "6": {
+    "inputs": {
+      "seed": 498686489090536,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "1",
+        0
+      ],
+      "positive": [
+        "5",
+        0
+      ],
+      "negative": [
+        "3",
+        0
+      ],
+      "latent_image": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "10": {
+    "inputs": {
+      "samples": [
+        "6",
+        0
+      ],
+      "vae": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "11": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "SaveImage"
+  },
+  "13": {
+    "inputs": {
+      "unet_name": "flux_dev_fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "class_type": "UNETLoader"
+  },
+  "14": {
+    "inputs": {
+      "clip_name1": "clip_l.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux"
+    },
+    "class_type": "DualCLIPLoader"
+  },
+  "15": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader"
+  }
+}

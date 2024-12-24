@@ -1,0 +1,349 @@
+{
+  "1": {
+    "inputs": {
+      "text_input": "",
+      "task": "more_detailed_caption",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 1024,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 189180250576602,
+      "image": [
+        "42",
+        0
+      ],
+      "florence2_model": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "Florence2Run"
+  },
+  "3": {
+    "inputs": {
+      "model": "gokaygokay/Florence-2-Flux-Large",
+      "precision": "fp16",
+      "attention": "sdpa"
+    },
+    "class_type": "DownloadAndLoadFlorence2Model"
+  },
+  "4": {
+    "inputs": {
+      "text": "The image shows a gray cat sitting on a light-colored floor in front of a large window. The cat is facing the camera and is looking directly at the camera. It has a pair of round, orange-framed glasses on its face. Its eyes are wide open and its mouth is slightly open, as if it is about to say something. Its body is slightly hunched over, with its front legs slightly bent and its tail curled around its body. In the background, there is a black leather couch and a small plant. The window is on the left side of the image, and the view outside is of a brick wall.",
+      "anything": [
+        "1",
+        2
+      ]
+    },
+    "class_type": "easy showAnything"
+  },
+  "6": {
+    "inputs": {
+      "unet_name": "flux_dev_fp8.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader"
+  },
+  "7": {
+    "inputs": {
+      "clip_name1": "clip_l.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux"
+    },
+    "class_type": "DualCLIPLoader"
+  },
+  "8": {
+    "inputs": {
+      "text": [
+        "1",
+        2
+      ],
+      "clip": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "9": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader"
+  },
+  "10": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance"
+  },
+  "11": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode"
+  },
+  "12": {
+    "inputs": {
+      "seed": 91016745634153,
+      "steps": 25,
+      "cfg": 1,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": [
+        "36",
+        0
+      ],
+      "positive": [
+        "10",
+        0
+      ],
+      "negative": [
+        "16",
+        1
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "13": {
+    "inputs": {
+      "pixels": [
+        "42",
+        0
+      ],
+      "vae": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "VAEEncode"
+  },
+  "14": {
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "16": {
+    "inputs": {
+      "strength": 0.7000000000000001,
+      "start_percent": 0,
+      "end_percent": 0.75,
+      "positive": [
+        "8",
+        0
+      ],
+      "negative": [
+        "11",
+        0
+      ],
+      "control_net": [
+        "17",
+        0
+      ],
+      "image": [
+        "42",
+        0
+      ],
+      "vae_optional": [
+        "9",
+        0
+      ]
+    },
+    "class_type": "ACN_AdvancedControlNetApply_v2"
+  },
+  "17": {
+    "inputs": {
+      "cnet": "flux1-dev_upscale.safetensors"
+    },
+    "class_type": "ACN_ControlNetLoaderAdvanced"
+  },
+  "19": {
+    "inputs": {
+      "text_input": "",
+      "task": "caption",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 1024,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 122739312742686,
+      "image": [
+        "42",
+        0
+      ],
+      "florence2_model": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "Florence2Run"
+  },
+  "20": {
+    "inputs": {
+      "text": "A gray cat wearing glasses sitting in front of a window.",
+      "anything": [
+        "19",
+        2
+      ]
+    },
+    "class_type": "easy showAnything"
+  },
+  "24": {
+    "inputs": {
+      "megapixels": 1,
+      "images": [
+        "40",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToMegapixels"
+  },
+  "25": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "upscale_method": "nearest-exact",
+      "keep_proportion": false,
+      "divisible_by": 2,
+      "crop": "disabled",
+      "image": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJ"
+  },
+  "27": {
+    "inputs": {
+      "images": [
+        "25",
+        0
+      ]
+    },
+    "class_type": "PreviewImage"
+  },
+  "34": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": false,
+        "lora": "cat2_rank4_bf16.safetensors",
+        "strength": 0.7
+      },
+      "lora_2": {
+        "on": false,
+        "lora": "dog6_rank4_bf16.safetensors",
+        "strength": 0.7
+      },
+      "lora_3": {
+        "on": false,
+        "lora": "flower_1_rank4_bf16.safetensors",
+        "strength": 1
+      },
+      "lora_4": {
+        "on": false,
+        "lora": "vase_rank4_bf16.safetensors",
+        "strength": 1
+      },
+      "lora_5": {
+        "on": false,
+        "lora": "pet_cat_rank4_bf16-step00640.safetensors",
+        "strength": 0.7
+      },
+      "lora_6": {
+        "on": false,
+        "lora": "dog_rank4_bf16-step00640.safetensors",
+        "strength": 0.2
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "6",
+        0
+      ],
+      "clip": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)"
+  },
+  "35": {
+    "inputs": {
+      "images": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "PreviewImage"
+  },
+  "36": {
+    "inputs": {
+      "model": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "DifferentialDiffusion"
+  },
+  "37": {
+    "inputs": {
+      "delimiter": "",
+      "clean_whitespace": "true",
+      "text_a": [
+        "19",
+        2
+      ],
+      "text_b": [
+        "38",
+        0
+      ],
+      "text_c": [
+        "1",
+        2
+      ]
+    },
+    "class_type": "Text Concatenate"
+  },
+  "38": {
+    "inputs": {
+      "text": "The glasses have a rectangular frame with a tortoiseshell pattern in shades of brown, black, and blue. The side is blue. The frame has a thin metal bridge that extends from the top to the bottom of the frame. The bridge is slightly curved and has a small metal hook at the end. The lenses are slightly tinted and the frame appears to be slightly worn.",
+      "text_b": "The cat on the left is <pet_cat>.",
+      "text_c": "The dog on the right is <dog6> with huge ears.",
+      "text_d": "The flower is a plum blossom <flower_1> with five petals."
+    },
+    "class_type": "Text String"
+  },
+  "42": {
+    "inputs": {
+      "image": "0.jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage"
+  }
+}

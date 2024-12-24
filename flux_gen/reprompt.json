@@ -1,0 +1,92 @@
+{
+    "0":{
+        "src_image": ["cat2", "dog6"],
+        "token_name": ["<cat2>", "<dog6>"],
+        "prompt": "A <cat2> on the right and a <dog6> on the left.",
+        "encode_prompt": {
+            "cat2": "cat",
+            "dog6": "dog"
+        },
+        "prompt_base_image": "A photo of a cat on the right and a dog on the left in a room, both looking at each other.",
+        "prompt_layers": {
+            "dog6": {
+                "prompt": "A photo of a cat on the right and a <dog6> on the left in a room, both looking at each other.",
+                "detect": "dog"
+            },
+            "cat2": {
+                "prompt": "A photo of a <cat2> on the right and a dog on the left in a room, both looking at each other.",
+                "detect": "cat"
+            }
+        },
+        "prompt_4_clip_eval": "A cat on the right and a dog on the left."
+    },
+    "1":{
+        "src_image": ["flower_1", "vase"],
+        "token_name": ["<flower_1>", "<vase>"],
+        "prompt": "A <flower_1> in a <vase>.",
+        "encode_prompt": {
+            "flower_1": "flower",
+            "vase": "vase"
+        },
+        "prompt_base_image": "A photo of a flower in a tall, thin vase.",
+        "prompt_layers": {
+            "flower_1": {
+                "prompt": "A photo of a <flower_1> in a tall, thin vase.",
+                "detect": "flower"
+            },
+            "vase": {
+                "prompt": "A photo of a flower in a <vase>.",
+                "detect": "vase"
+            }
+        },
+        "prompt_4_clip_eval": "A flower in a vase."
+    },
+    "2":{
+        "src_image": ["dog", "pet_cat1", "dog6"],
+        "token_name": ["<dog>", "<pet_cat>", "<dog6>"],
+        "prompt": "A <dog>, a <pet_cat1> and a <dog6> near a forest.",
+        "encode_prompt": {
+            "dog": "black dog",
+            "pet_cat1": "cat",
+            "dog6": "blue dog"
+        },
+        "prompt_base_image": "A close-up of a white cat on the left, a black dog in the middle, and a blue dog on the right near a forest.",
+        "prompt_layers": {
+            "dog6": {
+                "prompt": "A close-up of a dog and a cat on the left, and a <dog6> on the right near the forest.",
+                "detect": "blue dog"
+            },
+            "dog": {
+                "prompt": "A close-up of a cat and a dog on the side, and a <dog> in the middle near the forest.",
+                "detect": "black dog"
+            },
+            "pet_cat": {
+                "prompt": "A close-up of a big dog and a small dog on the right, and <pet_cat> on the left near the forest.",
+                "detect": "white cat"
+            }
+            
+        },
+        "prompt_4_clip_eval": "A dog, a pet cat and a dog near a forest."
+    },
+    "3":{
+        "src_image": ["cat2", "wearable_glasses", "watercolor"],
+        "token_name": ["<cat2>", "<wearable_glasses>", "<watercolor>"],
+        "prompt": "A <cat2> wearing <wearable_glasses> in a <watercolor> style.",
+        "encode_prompt": {
+            "cat2": "cat",
+            "wearable_glasses": "glasses"
+        },
+        "prompt_base_image": "A photo of a cat wearing glasses.",
+        "prompt_layers": {
+            "cat2": {
+                "prompt": "A photo of a <cat2> wearing glasses.",
+                "detect": "cat"
+            },
+            "wearable_glasses": {
+                "prompt": "A photo of a cat wearing <wearable_glasses>.",
+                "detect": "glasses"
+            }
+        },
+        "prompt_4_clip_eval": "A cat wearing wearable glasses in a watercolor style."
+    }
+}
