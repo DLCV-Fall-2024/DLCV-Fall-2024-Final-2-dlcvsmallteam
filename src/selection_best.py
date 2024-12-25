@@ -37,7 +37,7 @@ def select_best_images(task, image_dir, json_path, save_dir):
 
     sorted_images_path = sorted(zip(image_path_list, total_score), key=lambda x: x[1], reverse=True)
 
-    selected_images_path = sorted_images_path[0]
+    selected_images_path, _ = sorted_images_path[0]
 
     selected_images = Image.open(selected_images_path)
 

@@ -1,0 +1,1 @@
+python3 evaluation/grade.py --json_path Data/prompts.json --output_dir codalab_output/submission_images -s -1
