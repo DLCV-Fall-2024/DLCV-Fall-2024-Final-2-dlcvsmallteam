@@ -36,6 +36,9 @@ def generate_inpainting_image(
     TASK_PROMPT = '<CAPTION_TO_PHRASE_GROUNDING>'
     
     img_cnt = 0
+
+    generator = torch.Generator()
+    generator.manual_seed(submission_num)
     
     for i, (depth, tags) in enumerate(concepts.items()):
         
@@ -65,7 +68,7 @@ def generate_inpainting_image(
                 max_new_tokens=1024,
                 early_stopping=False,
                 do_sample=False,
-                num_beams=3
+                num_beams=3,
             )
             
             generated_text = processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
@@ -148,6 +151,7 @@ def generate_inpainting_image(
                     num_inference_steps=50,
                     # width=512,
                     # height=512
+                    generator=generator
                 ).images[0]
                 
                 result.save(os.path.join(output_dir, image_filename))
@@ -174,7 +178,8 @@ def generate_inpainting_image(
             image=result,
             prompt=prompt_list[task],
             # original_size=(512,512),
-            # target_size=(512,512)
+            # target_size=(512,512),
+            generator=generator
         ).images[0]
         
         refined_image = refined_image.resize((512, 512))

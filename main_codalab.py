@@ -4,7 +4,6 @@ import os
 import argparse
 import glob
 
-os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 def main():
 
