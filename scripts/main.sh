@@ -1,3 +1,3 @@
-bash ./generate_base_imgs.sh
-bash ./generate_candidate_imgs.sh
-bash ./select.sh
+bash ./scripts/generate_base_imgs.sh
+bash ./scripts/generate_candidate_imgs.sh
+bash ./scripts/select.sh
