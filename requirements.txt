@@ -10,7 +10,7 @@ Pillow==10.4.0
 einops==0.8.0
 supervision==0.25.1
 peft==0.13.0
-flash_attn==1.0.5
+# flash_attn==1.0.5
 spaces==0.31.1
 isort==5.13.2
 huggingface-hub==0.24.6
