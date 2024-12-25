@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
             total_scores = [i + 2 * t for i, t in zip(image_scores, text_scores)]
 
-            sorted_indices = sorted(range(len(total_scores)), key=lambda k: total_scores[k])[-10:]
+            sorted_indices = sorted(range(len(total_scores)), key=lambda k: total_scores[k])[-1:]
 
             image_scores_filtered = [image_scores[i] for i in sorted_indices]
             text_scores_filtered = [text_scores[i] for i in sorted_indices]
