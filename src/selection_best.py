@@ -6,7 +6,7 @@ from PIL import Image
 
 from src.clip_score import calculate_clip_image_scores_folder, calculate_clip_text_scores_folder
 
-def select_images(task, image_dir, json_path, save_dir):
+def select_best_images(task, image_dir, json_path, save_dir):
     
     with open(json_path, 'r') as file:
         prompts = json.load(file)
@@ -37,9 +37,9 @@ def select_images(task, image_dir, json_path, save_dir):
 
     sorted_images_path = sorted(zip(image_path_list, total_score), key=lambda x: x[1], reverse=True)
 
-    selected_images_path = sorted_images_path[:10]
+    selected_images_path = sorted_images_path[0]
 
-    selected_images = [Image.open(image_path) for image_path, _ in selected_images_path]
+    selected_images = Image.open(selected_images_path)
 
-    for i, image in enumerate(selected_images):
-        image.save(os.path.join(save_dir, f'{i}.png'))
+    for i in range(10):
+        selected_images.save(os.path.join(save_dir, f'{i}.png'))

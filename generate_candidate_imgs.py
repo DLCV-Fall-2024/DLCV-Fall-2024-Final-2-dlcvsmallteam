@@ -1,4 +1,3 @@
-from src.gen_base_imgs import gen_base_imgs
 from src.inpainting import generate_inpainting_image
 import os
 import argparse
@@ -32,12 +31,8 @@ def main():
     
     NUM_IMAGES = 100
 
-    gen_base_imgs(task=task, num_imgs=NUM_IMAGES)
-
     base_images = glob.glob(f'./codalab_output/base_images/{task}/*.png')
     base_images = sorted(base_images)
-
-    gen_base_imgs(task=task, num_imgs=NUM_IMAGES)
 
     for i in range(NUM_IMAGES):
         print(f'Generating submission image {i}')
