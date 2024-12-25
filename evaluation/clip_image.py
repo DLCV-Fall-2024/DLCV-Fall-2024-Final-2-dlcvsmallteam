@@ -24,6 +24,7 @@ def calculate_clip_scores(input_images: List[Tuple[str, Image.Image]],
                           reference_images: List[Tuple[str, Image.Image]],
                           batch_size: int = 32) -> List[Tuple[str, float]]:
     # Load the CLIP model and processor
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
     processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 

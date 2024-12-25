@@ -6,6 +6,7 @@ import os
 
 def calculate_clip_text_scores_folder(folder_path: str, text: str) -> List[Tuple[str, float]]:
     # Load the CLIP model and processor
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
     processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
