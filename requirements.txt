@@ -15,5 +15,6 @@ flash_attn==1.0.5
 spaces
 isort
 huggingface-hub==0.24.6
+gdown
 git+https://github.com/openai/CLIP.git
 git+https://github.com/VectorSpaceLab/OmniGen.git

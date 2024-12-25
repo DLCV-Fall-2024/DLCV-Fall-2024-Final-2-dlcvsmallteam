@@ -1,14 +1,8 @@
-import copy
 import os
-import random
-
-from diffusers import FluxControlNetInpaintPipeline
-
-import numpy as np
 import torch
 from diffusers import StableDiffusionXLInpaintPipeline, StableDiffusionXLImg2ImgPipeline
 
-from PIL import Image, ImageFilter
+from PIL import Image
 from transformers import AutoModelForCausalLM, AutoProcessor
 
 from src.utils.xml_utils import get_tags_from_xml_file, get_counter_from_tags
@@ -36,12 +30,15 @@ def generate_inpainting_image(
     concepts = get_tags_from_xml_file(xml_path)
     counters = get_counter_from_tags(concepts)
     
-    print('Concepts: ', concepts)
-    print('Counters: ', counters)
+    # print('Concepts: ', concepts)
+    # print('Counters: ', counters)
     
     TASK_PROMPT = '<CAPTION_TO_PHRASE_GROUNDING>'
     
     img_cnt = 0
+
+    generator = torch.Generator()
+    generator.manual_seed(submission_num)
     
     for i, (depth, tags) in enumerate(concepts.items()):
         
@@ -51,7 +48,7 @@ def generate_inpainting_image(
         unique_tags = list(set(tags))
         unique_tags.sort()
         
-        print(f'Layer: {i}, Unique tags: {unique_tags}')
+        # print(f'Layer: {i}, Unique tags: {unique_tags}')
         
         if i == 1:
             image = Image.open(base_image_path)
@@ -60,7 +57,7 @@ def generate_inpainting_image(
         
         for idx, tag in enumerate(unique_tags):
         
-            print(f'i: {i}, idx: {idx}, tag: {tag}')
+            # print(f'i: {i}, idx: {idx}, tag: {tag}')
             
             prompt = TASK_PROMPT + tag
             inputs = processor(text=prompt, images=image, return_tensors='pt')
@@ -71,7 +68,7 @@ def generate_inpainting_image(
                 max_new_tokens=1024,
                 early_stopping=False,
                 do_sample=False,
-                num_beams=3
+                num_beams=3,
             )
             
             generated_text = processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
@@ -154,6 +151,7 @@ def generate_inpainting_image(
                     num_inference_steps=50,
                     # width=512,
                     # height=512
+                    generator=generator
                 ).images[0]
                 
                 result.save(os.path.join(output_dir, image_filename))
@@ -180,12 +178,13 @@ def generate_inpainting_image(
             image=result,
             prompt=prompt_list[task],
             # original_size=(512,512),
-            # target_size=(512,512)
+            # target_size=(512,512),
+            generator=generator
         ).images[0]
         
         refined_image = refined_image.resize((512, 512))
 
-        refined_image.save(os.path.join(submission_dir, str(task), f'{submission_num}.png'))        
+        refined_image.save(os.path.join(submission_dir, f'{submission_num}.png'))        
     
 if __name__ == '__main__':
     generate_inpainting_image()
